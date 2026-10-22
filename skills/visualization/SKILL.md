@@ -112,7 +112,11 @@ def get_layout(**kwargs):
             bordercolor=COLOUR_TEXT,
         ),
     )
-    defaults.update(kwargs)
+    for key, value in kwargs.items():
+        # Merge dict overrides into the defaults so e.g. title=dict(text=...) keeps x and font
+        if isinstance(value, dict) and isinstance(defaults.get(key), dict):
+            value = {**defaults[key], **value}
+        defaults[key] = value
     return go.Layout(**defaults)
 
 def add_created_at_annotation(fig):

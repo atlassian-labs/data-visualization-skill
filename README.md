@@ -40,7 +40,13 @@ Open your agent in the project where you want charts, and say any variation of:
 
 ### Manual install
 
-Requirements: `plotly` and `pandas`, plus `kaleido` only if you want to export static images (`pip install kaleido`).
+Requirements:
+
+- Python 3.9+ with `plotly` and `pandas` (`pip install plotly pandas`).
+- In Jupyter or VS Code notebooks: `nbformat` (`pip install nbformat`), which `fig.show()` needs to render charts.
+- For static image export only: `kaleido` (`pip install kaleido`). It renders with Chrome; if Chrome isn't installed, run `plotly_get_chrome` once.
+
+Tested with Python 3.9, plotly 7.1 and pandas 2.3.
 
 Clone the repository, then copy the `skills/visualization` folder into your agent's skills directory:
 
@@ -67,14 +73,15 @@ Everything a chart inherits (colours, fonts, default size) sits in the `STYLE SE
 
 ```
 README.md
-AGENTS.md                              # placeholder for agent instructions
+AGENTS.md                              # instructions for agents working on this repo
 CLAUDE.md                              # symlink to AGENTS.md
 skills/
   visualization/
     SKILL.md                           # skill definition, preamble, rules
     references/
       chart-patterns.md                # code patterns for every chart type
-.claude/skills/visualization           # symlink to skills/visualization
+.claude/skills/visualization           # symlink to skills/visualization (Claude Code)
+.agents/skills/visualization           # symlink to skills/visualization (Codex)
 ```
 
 ## Project status

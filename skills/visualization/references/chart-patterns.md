@@ -60,9 +60,9 @@ for series in series_values:
         mode='lines+markers',
         marker=dict(size=8),
         line=dict(width=2),
-        name=series,
+        name=str(series),
         line_color=colours_mapping[series],
-        hovertemplate="<b>" + series + "</b><br>Day: %{x}<br>Value: %{y:.1f}<extra></extra>",
+        hovertemplate="<b>" + str(series) + "</b><br>Day: %{x}<br>Value: %{y:.1f}<extra></extra>",
     ))
 
 add_created_at_annotation(fig)
@@ -172,13 +172,13 @@ for series, colour in zip(pivot_df.columns, colours):
     fig.add_trace(go.Scatter(
         x=pivot_df.index,
         y=pivot_df[series],
-        name=series,
+        name=str(series),
         mode='lines',
         fill='tonexty',
         line=dict(width=0.5),
         fillcolor=hex_to_rgba(colour, 0.3),
         line_color=colour,
-        hovertemplate=series + "<br>Date: %{x}<br>Value: %{y:.1f}<extra></extra>"
+        hovertemplate=str(series) + "<br>Date: %{x}<br>Value: %{y:.1f}<extra></extra>"
     ))
 
 fig.update_layout(xaxis_title="Date", yaxis_title="Value")
@@ -201,9 +201,9 @@ for series, colour in zip(series_values, series_colours(len(series_values))):
     fig.add_trace(go.Bar(
         x=subset['category_col'],
         y=subset['value_col'],
-        name=series,
+        name=str(series),
         marker_color=colour,
-        hovertemplate=series + "<br>Category: %{x}<br>Value: %{y:.1f}<extra></extra>",
+        hovertemplate=str(series) + "<br>Category: %{x}<br>Value: %{y:.1f}<extra></extra>",
     ))
 
 fig.update_layout(
@@ -312,7 +312,7 @@ for cat, colour in zip(categories, series_colours(len(categories))):
     subset = df[df['category_col'] == cat]
     fig.add_trace(go.Box(
         y=subset['value_col'],
-        name=cat,
+        name=str(cat),
         marker_color=colour,
         boxmean='sd',
     ))
@@ -368,7 +368,7 @@ for cat, colour in zip(categories, series_colours(len(categories))):
     subset = df[df['category_col'] == cat]
     fig.add_trace(go.Violin(
         y=subset['value_col'],
-        name=cat,
+        name=str(cat),
         marker_color=colour,
         box_visible=True,
         meanline_visible=True,
@@ -713,7 +713,7 @@ if 'series_col' in df.columns:
             fill='toself',
             fillcolor=hex_to_rgba(colour, 0.15),
             line=dict(color=colour, width=2),
-            name=series,
+            name=str(series),
         ))
 else:
     fig.add_trace(go.Scatterpolar(
