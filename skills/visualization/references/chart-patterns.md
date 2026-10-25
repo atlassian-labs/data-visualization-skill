@@ -501,20 +501,56 @@ fig.show()
 
 Best for: part-to-whole across a hierarchy (category → subcategory → item).
 
+Expected input: `df` contains one row per node, including parent nodes.
+- `id_col`: unique string ID for each node.
+- `label_col`: display label; labels may repeat.
+- `parent_col`: parent node's ID, or `""` for a root.
+- `value_col`: total value of the node, including its descendants.
+
+Calculate parent totals before plotting. With `branchvalues='total'`,
+a parent's value must be at least the sum of its immediate children's
+values. Use equality when the children account for the entire parent.
+
 ```python
+# Assign one palette colour per root and inherit it down the hierarchy.
+parent_of = dict(zip(df['id_col'], df['parent_col']))
+
+def root_id(node_id):
+    while parent_of[node_id] != '':
+        node_id = parent_of[node_id]
+    return node_id
+
+root_ids = df.loc[df['parent_col'].eq(''), 'id_col'].tolist()
+root_colours = dict(zip(root_ids, series_colours(len(root_ids))))
+
+node_colours = [
+    root_colours[root_id(node_id)]
+    for node_id in df['id_col']
+]
+
+# Count root totals only, avoiding double-counting descendants.
+overall_total = df.loc[df['parent_col'].eq(''), 'value_col'].sum()
+
 fig = go.Figure(layout=get_layout(
     title=dict(text="Composition"),
     margin=dict(t=50, l=10, r=10, b=80),
 ))
 
 fig.add_trace(go.Treemap(
+    ids=df['id_col'],
     labels=df['label_col'],
     parents=df['parent_col'],
     values=df['value_col'],
-    marker=dict(colors=series_colours(len(df))),
     branchvalues='total',
+    marker=dict(colors=node_colours),
+    customdata=df['value_col'] / overall_total,
     texttemplate='<b>%{label}</b><br>%{value:,.0f}',
-    hovertemplate='%{label}<br>Value: %{value:,.0f}<br>Parent: %{parent}<extra></extra>',
+    hovertemplate=(
+        '<b>%{label}</b><br>'
+        'Value: %{value:,.0f}<br>'
+        '%{customdata:.1%} of total'
+        '<extra></extra>'
+    ),
 ))
 
 add_created_at_annotation(fig)
@@ -527,19 +563,56 @@ fig.show()
 
 Best for: nested hierarchical drill-down.
 
+Expected input: `df` contains one row per node, including parent nodes.
+- `id_col`: unique string ID for each node.
+- `label_col`: display label; labels may repeat.
+- `parent_col`: parent node's ID, or `""` for a root.
+- `value_col`: total value of the node, including its descendants.
+
+Calculate parent totals before plotting. With `branchvalues='total'`,
+a parent's value must be at least the sum of its immediate children's
+values. Use equality when the children account for the entire parent.
+
 ```python
+# Assign one palette colour per root and inherit it down the hierarchy.
+parent_of = dict(zip(df['id_col'], df['parent_col']))
+
+def root_id(node_id):
+    while parent_of[node_id] != '':
+        node_id = parent_of[node_id]
+    return node_id
+
+root_ids = df.loc[df['parent_col'].eq(''), 'id_col'].tolist()
+root_colours = dict(zip(root_ids, series_colours(len(root_ids))))
+
+node_colours = [
+    root_colours[root_id(node_id)]
+    for node_id in df['id_col']
+]
+
+# Count root totals only, avoiding double-counting descendants.
+overall_total = df.loc[df['parent_col'].eq(''), 'value_col'].sum()
+
 fig = go.Figure(layout=get_layout(
     title=dict(text="Hierarchical Breakdown"),
     margin=dict(t=50, l=10, r=10, b=80),
 ))
 
 fig.add_trace(go.Sunburst(
+    ids=df['id_col'],
     labels=df['label_col'],
     parents=df['parent_col'],
     values=df['value_col'],
-    marker=dict(colors=series_colours(len(df))),
     branchvalues='total',
-    hovertemplate='%{label}<br>Value: %{value:,.0f}<br>%{percentRoot:.1%} of total<extra></extra>',
+    marker=dict(colors=node_colours),
+    customdata=df['value_col'] / overall_total,
+    texttemplate='<b>%{label}</b><br>%{value:,.0f}',
+    hovertemplate=(
+        '<b>%{label}</b><br>'
+        'Value: %{value:,.0f}<br>'
+        '%{customdata:.1%} of total'
+        '<extra></extra>'
+    ),
 ))
 
 add_created_at_annotation(fig)
