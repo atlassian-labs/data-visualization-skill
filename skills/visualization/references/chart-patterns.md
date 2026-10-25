@@ -175,6 +175,7 @@ for series, colour in zip(pivot_df.columns, colours):
         name=str(series),
         mode='lines',
         fill='tonexty',
+        stackgroup='one',
         line=dict(width=0.5),
         fillcolor=hex_to_rgba(colour, 0.3),
         line_color=colour,
