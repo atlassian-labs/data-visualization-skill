@@ -119,14 +119,15 @@ def get_layout(**kwargs):
         defaults[key] = value
     return go.Layout(**defaults)
 
-def add_created_at_annotation(fig):
-    """Add a 'Chart created: YYYY-MM-DD' annotation to the bottom-right of the chart."""
+def add_created_at_annotation(fig, *, offset_px=65, bottom_margin_px=100):
+    """Add a 'Chart created: YYYY-MM-DD' annotation to the bottom-right of the chart. Adjust spacing for dense labels."""
     chart_created_at_str = datetime.now().strftime("%Y-%m-%d")
-    fig.update_layout(margin=dict(b=80))
+    fig.update_layout(margin=dict(b=max(fig.layout.margin.b or 0, bottom_margin_px)))
     fig.add_annotation(
         text=f"Chart created: {chart_created_at_str}",
         xref="paper", yref="paper",
-        x=1, y=-0.2,
+        x=1, y=0,
+        yshift=-offset_px,
         xanchor="right", yanchor="top",
         showarrow=False,
         font=dict(size=12),
@@ -240,7 +241,7 @@ For each visualization, ensure you have (or make reasonable assumptions for):
 7. **Line charts**: ALWAYS sort by the x-axis column before plotting (Plotly connects points in order). With multiple series, sort by the series column first (`df.sort_values([series_col, x_col])`) so the legend order and series colours are the same on every run.
 8. **Legend position**: Default is top-right. For area/stacked charts, use a horizontal legend above: `legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)`.
 9. **Light colours**: Several palette colours (`#FFB651`, `#DAA5AC`, `#61BEA4`) are under 3:1 contrast on white. Use them for filled areas and bars, not thin lines or text.
-10. **Created-at annotation**: Call `add_created_at_annotation(fig)` on every chart before `fig.show()`.
+10. **Created-at annotation**: Call `add_created_at_annotation(fig)` on every chart before `fig.show()`. Ensure the creation date is fully visible and does not overlap axis labels or titles. Adjust offset_px and bottom_margin_px when needed.
 
 ## Axes
 
