@@ -247,7 +247,7 @@ For each visualization, ensure you have (or make reasonable assumptions for):
 
 ## Saving charts
 
-- Interactive: `fig.write_html("chart.html", include_plotlyjs=True, full_html=True)` produces a self-contained file.
+- Interactive: `fig.write_html("chart.html", include_plotlyjs="cdn", full_html=True)` produces a file linking to Plotly.js from a CDN, so each file is about 10 KB but needs internet to open. Use `include_plotlyjs=True` for a fully self-contained file (about 4.8 MB) when the user needs it to work offline, behind a firewall, or in a viewer that blocks external scripts, such as some email clients and preview panes. 
 - Static image: `fig.write_image("chart.png")` (requires `pip install kaleido`).
 
 ## Customising
