@@ -1,0 +1,6 @@
+# Pinned so pattern tests run against the versions the README says the skill is tested with
+plotly==7.1.0
+pandas==2.3.3
+numpy==2.0.2
+PyYAML==6.0.2
+pytest==8.3.5

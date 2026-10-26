@@ -1,10 +1,6 @@
 ---
 name: visualization
 description: "Data visualization using Plotly with Atlassian's internal design principles. Generates clean, publication-quality charts with a consistent colour palette, a single editable style preamble, and a creation date annotation. Use when: charts, plots, visualizations, graphs, bar chart, line chart, scatter plot, heatmap, area chart, pie chart, histogram, boxplot, bubble chart, violin plot, funnel chart, waterfall, Sankey, treemap, Plotly, or styling an existing chart."
-labels:
-  - analytics
-  - charts
-  - visualization
 metadata:
   version: 0.1.0
 ---
