@@ -103,11 +103,8 @@ fig = go.Figure(layout=get_layout(
 fig.add_trace(go.Scatter(
     x=df['x_col'],
     y=df['y_col'],
-    mode='markers+text',
-    marker=dict(color=chart_colours[0], size=12),
-    text=df['y_col'],
-    textposition='top center',
-    texttemplate='%{y:.1f}',
+    mode='markers',
+    marker=dict(color=chart_colours[0], size=7, opacity=0.6),
     hovertemplate="X: %{x}<br>Y: %{y:.1f}<extra></extra>",
 ))
 
@@ -116,6 +113,8 @@ fig.update_xaxes(showgrid=True)
 add_created_at_annotation(fig)
 fig.show()
 ```
+
+**Gotcha**: Only add point labels for small scatters (about 20 points or fewer); past that they overprint into an unreadable block. To label, set `mode='markers+text'`, `texttemplate='%{y:.1f}'` and `textposition='top center'`, or label only the points the chart is about.
 
 ---
 
@@ -135,6 +134,7 @@ fig.add_trace(go.Heatmap(
     x=pivot_df.columns,
     y=pivot_df.index,
     colorscale=SEQUENTIAL_SCALE,  # use DIVERGING_SCALE when values have a meaningful midpoint
+    # zmid=0,  # required with DIVERGING_SCALE: centres the neutral colour on the midpoint
     text=np.round(pivot_df.values, 1),
     texttemplate='%{text}',
     textfont={"size": 10},
@@ -151,6 +151,8 @@ fig.update_layout(
 add_created_at_annotation(fig)
 fig.show()
 ```
+
+**Gotcha**: With `DIVERGING_SCALE`, always set `zmid` to the meaningful midpoint (usually 0). Without it Plotly centres the scale on the midpoint of the data's min and max, so the neutral colour lands on the wrong value. For bounded measures such as correlations, also set `zmin=-1, zmax=1`.
 
 ---
 
@@ -445,10 +447,12 @@ fig.add_trace(go.Waterfall(
     increasing=dict(marker=dict(color=COLOUR_POSITIVE)),
     decreasing=dict(marker=dict(color=COLOUR_NEGATIVE)),
     totals=dict(marker=dict(color=COLOUR_TOTAL)),
-    texttemplate='%{y:,.0f}',
+    # Label changes with %{delta} and totals with %{final}: a formatted %{y:...} prints the raw input y,
+    # which is 0 or arbitrary for 'total' bars because Plotly computes their height
+    texttemplate=['%{delta:+,.0f}' if m == 'relative' else '%{final:,.0f}' for m in df['measure_col']],
     textposition='outside',
     cliponaxis=False,
-    hovertemplate="%{x}<br>Value: %{y:,.0f}<extra></extra>",
+    hovertemplate="%{x}<br>Change: %{delta:+,.0f}<br>Running total: %{final:,.0f}<extra></extra>",
 ))
 
 fig.update_layout(xaxis_title="", yaxis_title="Value")
